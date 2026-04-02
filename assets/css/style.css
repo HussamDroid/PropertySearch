@@ -1,0 +1,147 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Contact Form */
+.contact-form {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.contact-form h3 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.contact-form .form-label {
+    font-weight: bold;
+}
+
+.contact-form .form-control {
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+}
+
+.contact-form .form-control:focus {
+    border-color: #007bff;
+}
+
+.contact-form .btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 12px 24px;
+    border-radius: 5px;
+}
+
+.contact-form .btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+/* Amenities Section */
+.amenities-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.amenities-section h3 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 15px;
+}
+
+.amenities-section h5 {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #343a40;
+}
+
+.amenities-section ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.amenities-section ul li {
+    font-size: 1.1rem;
+    padding: 5px 0;
+}
+
+.amenities-section ul li i {
+    margin-right: 10px;
+    color: #28a745;
+}
+
+/* Layout for Contact Form and Amenities */
+.row {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Column Styling for Contact Form and Amenities */
+.col-md-6 {
+    margin-bottom: 20px;
+}
+/* Carousel Styling */
+.carousel-item img {
+    object-fit: cover;
+    height: 400px;
+    width: 100%;
+}
+
+/* Login Page Specifics */
+.card-body {
+    background-color: #ffffff;
+}
+
+.input-group-text {
+    border-radius: 8px 0 0 8px;
+    border: 1px solid #dee2e6;
+}
+
+.form-control {
+    border-radius: 0 8px 8px 0;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+}
+
+.form-control:focus {
+    background-color: #fff !important;
+    border-color: #2563eb;
+    box-shadow: none;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+/* Overview */
+.nav-link:hover {
+    color: var(--bs-primary) !important;
+    text-decoration: underline;
+}
+
+#overview section {
+    scroll-margin-top: 100px;
+}

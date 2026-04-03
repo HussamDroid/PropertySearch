@@ -1,17 +1,22 @@
-<?php
-include 'header.php'; 
+<?php include 'header.php'; ?>
 
-// 1. Get Property ID from URL
-$property_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-$query = "SELECT * FROM properties WHERE property_id = $property_id";
+<?php
+// 1. Get the Property ID safely
+$property_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// 2. Fetch Property Details
+$query = "SELECT * FROM properties WHERE property_id = '$property_id'";
 $result = mysqli_query($conn, $query);
 $property = mysqli_fetch_assoc($result);
 
-// Redirect if property doesn't exist
 if (!$property) {
-    header("Location: index.php");
+    echo "<div class='container my-5 text-center'><div class='alert alert-danger'>Property not found.</div></div>";
+    include 'footer.php';
     exit();
 }
+
+$user_id = $_SESSION['user_id'] ?? null;
+$message = "";
 
 // 2. Logic for Favorites (Save & Remove)
 $is_favorite = false;
@@ -36,29 +41,38 @@ if (isset($_SESSION['user_id'])) {
         $is_favorite = true;
     }
 }
+
+// 3. Handle Review Submission (Using your user_reviews table)
+if (isset($_POST['submit_review']) && $user_id) {
+    $score = intval($_POST['score']);
+    $title = mysqli_real_escape_string($conn, $_POST['title']);
+    $content = mysqli_real_escape_string($conn, $_POST['content']);
+
+    $check_query = "SELECT * FROM user_reviews WHERE user_id = '$user_id' AND property_id = '$property_id'";
+    $check_res = mysqli_query($conn, $check_query);
+
+    if (mysqli_num_rows($check_res) > 0) {
+        $message = "<div class='alert alert-warning mt-3'>You have already reviewed this property.</div>";
+    } else {
+        $insert_review = "INSERT INTO user_reviews (user_id, property_id, title, content, score) 
+                          VALUES ('$user_id', '$property_id', '$title', '$content', '$score')";
+        mysqli_query($conn, $insert_review);
+        $message = "<div class='alert alert-success mt-3'>Review posted!</div>";
+    }
+}
+
+// 4. Fetch Reviews
+$reviews_query = "SELECT r.*, u.username FROM user_reviews r 
+                  JOIN users u ON r.user_id = u.user_id 
+                  WHERE r.property_id = '$property_id' ORDER BY r.review_id DESC";
+$reviews_result = mysqli_query($conn, $reviews_query);
 ?>
 
-<style>
-    .sticky-card {
-        top: 100px;
-        z-index: 10;
-    }
-    .amenity-box {
-        transition: 0.3s;
-        border: 1px solid #eee !important;
-    }
-    .amenity-box:hover {
-        background-color: #f8f9fa !important;
-        border-color: #0d6efd !important;
-    }
-</style>
-
 <div class="container my-5">
-    <div class="row g-5">
-        
+    <div class="row g-4">
         <div class="col-lg-8">
             
-            <div id="propertyCarousel" class="carousel slide shadow-sm rounded-4 overflow-hidden mb-4" data-bs-ride="carousel">
+           <div id="propertyCarousel" class="carousel slide shadow-sm rounded-4 overflow-hidden mb-4" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     <div class="carousel-item active">
                         <img src="assets/images/property<?php echo $property_id; ?>/1.jpg" class="d-block w-100" style="height: 400px; object-fit: cover;" onerror="this.src='assets/images/property<?php echo $property_id; ?>.jpg'">
@@ -87,59 +101,42 @@ if (isset($_SESSION['user_id'])) {
                 </button>
             </div>
 
-            <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                    <h1 class="fw-bold mb-1 text-dark"><?php echo htmlspecialchars($property['name']); ?></h1>
-                    <p class="text-muted fs-5"><i class="bi bi-geo-alt text-primary me-2"></i><?php echo htmlspecialchars($property['location']); ?></p>
-                </div>
-                <div class="text-end">
-                    <h2 class="text-primary fw-bold mb-0">QR <?php echo number_format($property['price']); ?></h2>
-                    <span class="badge bg-success px-3 py-2 mt-2 shadow-sm">Score: <?php echo $property['recommendation_score']; ?>/10</span>
-                </div>
-            </div>
-
-            <hr class="my-4 opacity-25">
-
-            <h4 class="fw-bold mb-4">Property Features</h4>
-            <div class="row g-3 mb-5">
-                <div class="col-6 col-md-3 text-center">
-                    <div class="p-3 rounded-4 bg-white shadow-sm amenity-box">
-                        <i class="bi bi-door-open fs-3 text-primary"></i>
-                        <p class="small fw-bold mb-0 mt-2">3 Bedrooms</p>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3 text-center">
-                    <div class="p-3 rounded-4 bg-white shadow-sm amenity-box">
-                        <i class="bi bi-droplet fs-3 text-primary"></i>
-                        <p class="small fw-bold mb-0 mt-2">2 Bathrooms</p>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3 text-center">
-                    <div class="p-3 rounded-4 bg-white shadow-sm amenity-box">
-                        <i class="bi bi-p-circle fs-3 text-primary"></i>
-                        <p class="small fw-bold mb-0 mt-2">Parking Space</p>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3 text-center">
-                    <div class="p-3 rounded-4 bg-white shadow-sm amenity-box">
-                        <i class="bi bi-wind fs-3 text-primary"></i>
-                        <p class="small fw-bold mb-0 mt-2">Central AC</p>
-                    </div>
+            <div class="amenities-section mb-5 p-4 bg-white rounded-4 shadow-sm">
+                <h4 class="fw-bold text-primary mb-4">Property Amenities</h4>
+                <div class="row">
+                    <div class="col-md-4 mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Parking</div>
+                    <div class="col-md-4 mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Gym Access</div>
+                    <div class="col-md-4 mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> 24/7 Security</div>
+                    <div class="col-md-4 mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Central AC</div>
+                    <div class="col-md-4 mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> High-speed WiFi</div>
                 </div>
             </div>
 
-            <h4 class="fw-bold mb-3">Detailed Description</h4>
-            <p class="text-muted" style="line-height: 1.8; font-size: 1.1rem;">
-                This premium <?php echo strtolower($property['type']); ?> located in the heart of <?php echo htmlspecialchars($property['location']); ?> 
-                offers a blend of luxury and comfort. Designed for modern living, the property features high-end appliances, 
-                spacious layouts, and access to premium community amenities.
-            </p>
+            <div class="reviews-section">
+                <h4 class="fw-bold mb-3">Recent Reviews</h4>
+                <?php if (mysqli_num_rows($reviews_result) > 0): ?>
+                    <?php while($rev = mysqli_fetch_assoc($reviews_result)): ?>
+                        <div class="card border-0 shadow-sm p-3 mb-3 rounded-3">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="fw-bold text-primary mb-1">@<?php echo htmlspecialchars($rev['username']); ?></h6>
+                                <span class="badge bg-light text-dark border">Score: <?php echo $rev['score']; ?>/5</span>
+                            </div>
+                            <p class="fw-bold mb-1 small"><?php echo htmlspecialchars($rev['title']); ?></p>
+                            <p class="text-muted small mb-0"><?php echo htmlspecialchars($rev['content']); ?></p>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <p class="text-muted small">No reviews yet.</p>
+                <?php endif; ?>
+            </div>
         </div>
 
         <div class="col-lg-4">
-            <div class="card border-0 shadow-lg rounded-4 p-4 sticky-top sticky-card">
-                
-                <?php if (isset($_SESSION['user_id'])): ?>
+            <div class="card border-0 shadow-sm p-4 rounded-4 sticky-top" style="top: 90px;">
+                <h3 class="fw-bold mb-1"><?php echo htmlspecialchars($property['name']); ?></h3>
+                <h4 class="text-primary fw-bold mb-4">QR <?php echo number_format($property['price']); ?></h4>
+
+                                <?php if (isset($_SESSION['user_id'])): ?>
                     <div class="mb-4 text-center">
                         <form method="POST">
                             <?php if ($is_favorite): ?>
@@ -157,23 +154,34 @@ if (isset($_SESSION['user_id'])) {
                         </form>
                     </div>
                 <?php endif; ?>
+                
+                <div class="d-grid gap-2 mb-4">
+                    <a href="https://wa.me/97400000000" class="btn btn-dark rounded-pill py-2">
+                        <i class="bi bi-whatsapp me-2"></i>Contact Agent
+                    </a>
+                </div>
 
-                <h5 class="fw-bold mb-3">Contact Property Agent</h5>
-                <form>
-                    <div class="mb-3">
-                        <label class="small text-muted mb-1 fw-bold">Full Name</label>
-                        <input type="text" class="form-control bg-light border-0 py-2" placeholder="Enter your name">
-                    </div>
-                    <div class="mb-3">
-                        <label class="small text-muted mb-1 fw-bold">Email Address</label>
-                        <input type="email" class="form-control bg-light border-0 py-2" placeholder="name@example.com">
-                    </div>
-                    <div class="mb-3">
-                        <label class="small text-muted mb-1 fw-bold">Message</label>
-                        <textarea class="form-control bg-light border-0" rows="4" placeholder="I would like to inquire about..."></textarea>
-                    </div>
-                    <button type="button" class="btn btn-primary w-100 py-2 fw-bold rounded-pill shadow-sm">
-                        Send Inquiry
-                    </button>
-                </form>
-            </div> </div> </div> </div> <?php include 'footer.php'; ?>
+                <hr>
+
+                <?php if ($user_id): ?>
+                    <h6 class="fw-bold mb-3">Write a Review</h6>
+                    <form method="POST">
+                        <input type="text" name="title" class="form-control mb-2" placeholder="Title" required>
+                        <select name="score" class="form-select mb-2" required>
+                            <option value="5">5 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="3">3 Stars</option>
+                        </select>
+                        <textarea name="content" class="form-control mb-3" rows="3" placeholder="Your review..." required></textarea>
+                        <button type="submit" name="submit_review" class="btn btn-primary w-100 rounded-pill btn-sm">Post Review</button>
+                    </form>
+                <?php else: ?>
+                    <p class="small text-center text-muted">Please <a href="login.php">Login</a> to review.</p>
+                <?php endif; ?>
+                <?php echo $message; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php include 'footer.php'; ?>

@@ -1,9 +1,12 @@
-/* General Styles */
+/* ==========================================================================
+   General & Layout Styles
+   ========================================================================== */
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f7f7f7;
     margin: 0;
     padding: 0;
+    color: #333;
 }
 
 .container {
@@ -11,49 +14,43 @@ body {
     margin: 0 auto;
 }
 
-/* Contact Form */
-.contact-form {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+/* Helper for smooth scrolling to sections */
+html {
+    scroll-behavior: smooth;
 }
 
-.contact-form h3 {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 20px;
+/* ==========================================================================
+   Navigation & Components
+   ========================================================================== */
+.navbar-brand {
+    letter-spacing: -0.5px;
 }
 
-.contact-form .form-label {
-    font-weight: bold;
+.nav-link:hover {
+    color: #2563eb !important; /* Bootstrap primary blue */
+    text-decoration: underline;
 }
 
-.contact-form .form-control {
-    border-radius: 5px;
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ddd;
+/* Custom shadow classes */
+.shadow-sm { box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important; }
+.rounded-4 { border-radius: 1rem !important; }
+
+/* ==========================================================================
+   Property Pages (Cards & Details)
+   ========================================================================== */
+.property-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.contact-form .form-control:focus {
-    border-color: #007bff;
+.property-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
 }
 
-.contact-form .btn-success {
-    background-color: #28a745;
-    border-color: #28a745;
-    font-weight: bold;
-    text-transform: uppercase;
-    padding: 12px 24px;
-    border-radius: 5px;
-}
-
-.contact-form .btn-success:hover {
-    background-color: #218838;
-    border-color: #1e7e34;
+.carousel-item img {
+    object-fit: cover;
+    height: 400px;
+    width: 100%;
 }
 
 /* Amenities Section */
@@ -72,12 +69,6 @@ body {
     margin-bottom: 15px;
 }
 
-.amenities-section h5 {
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: #343a40;
-}
-
 .amenities-section ul {
     list-style-type: none;
     padding-left: 0;
@@ -93,35 +84,19 @@ body {
     color: #28a745;
 }
 
-/* Layout for Contact Form and Amenities */
-.row {
-    display: flex;
-    justify-content: space-between;
-}
-
-/* Column Styling for Contact Form and Amenities */
-.col-md-6 {
-    margin-bottom: 20px;
-}
-/* Carousel Styling */
-.carousel-item img {
-    object-fit: cover;
-    height: 400px;
-    width: 100%;
-}
-
-/* Login Page Specifics */
-.card-body {
+/* ==========================================================================
+   Forms (Login & Contact)
+   ========================================================================== */
+.contact-form {
     background-color: #ffffff;
-}
-
-.input-group-text {
-    border-radius: 8px 0 0 8px;
-    border: 1px solid #dee2e6;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .form-control {
-    border-radius: 0 8px 8px 0;
+    border-radius: 8px;
     padding: 10px 15px;
     font-size: 0.95rem;
 }
@@ -129,19 +104,54 @@ body {
 .form-control:focus {
     background-color: #fff !important;
     border-color: #2563eb;
-    box-shadow: none;
+    box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.1);
 }
 
-.btn-primary:active {
-    transform: scale(0.98);
+.input-group-text {
+    border-radius: 8px 0 0 8px;
+    background-color: #f8f9fa;
 }
 
-/* Overview */
-.nav-link:hover {
-    color: var(--bs-primary) !important;
-    text-decoration: underline;
+/* ==========================================================================
+   FAQ & README Documentation Styles
+   ========================================================================== */
+.readme-content {
+    line-height: 1.8;
+    color: #444;
 }
 
-#overview section {
-    scroll-margin-top: 100px;
+.readme-content h2 {
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-top: 2rem;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.readme-content h3 {
+    font-weight: 600;
+    color: #2563eb;
+    margin-top: 1.5rem;
+}
+
+.readme-content li {
+    margin-bottom: 10px;
+    list-style-position: inside;
+}
+
+.readme-content strong {
+    color: #000;
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+@media (max-width: 768px) {
+    .carousel-item img {
+        height: 250px;
+    }
+    
+    .readme-content {
+        font-size: 0.95rem;
+    }
 }

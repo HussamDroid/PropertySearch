@@ -18,7 +18,7 @@
                 <ul class="list-unstyled small">
                     <li class="mb-2"><a href="index.php" class="text-white text-decoration-none opacity-75">Home</a></li>
                     <li class="mb-2"><a href="ranking.php" class="text-white text-decoration-none opacity-75">Rankings</a></li>
-                    <li class="mb-2"><a href="overview.php" class="text-white text-decoration-none opacity-75">System Overview</a></li>
+                    <li class="mb-2"><a href="overview.php" class="text-white text-decoration-none opacity-75">Overview</a></li>
                 </ul>
             </div>
 
